@@ -1,0 +1,56 @@
+.signature {
+    display: flex;
+    flex-direction: column;
+}
+
+.text, .canvas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    font-size: 40px; 
+    color: #0d3866;
+}
+
+
+h1, p {
+    margin-top: 1%;
+    margin-bottom: 1%;    
+}
+
+h1, p, input {
+    font-family: 'catamaranextrabold', arial, sans-serif;
+}
+
+p {
+    width: 33%;
+    text-align: justify;
+}
+
+#canvas {
+    cursor: crosshair;
+    width: 33%;
+    height: 22%;
+    border: 1px solid #000000;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+}
+
+input {
+    background-color: #1971CB;
+    border-radius: 7px;
+    color: #fff;
+    font-size: 100%;
+    box-shadow: 3px 3px 3px #0D3866;
+    margin-top: 5%;
+}
+
+#envoyer {
+    margin-right: 10%;
+    
+}
