@@ -1,11 +1,11 @@
 //mise en place du canvas
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
-context.strokeStyle = "#ff0000";
-context.lineWidth = 2;
+context.strokeStyle = "#000";
+context.lineWidth = 1;
 
 //obtenir la position de la souris sur le canva
-function GetmousePosition(canvasDom, mouseEvent) {
+function getMousePosition(canvasDom, mouseEvent) {
     var rectangle = canvasDom.getBoundingClientRect();// méthode qui renvoie objet DOMRect formé par l'union des rectangles = zone decrite par les boites de bordure
     return {
         x: mouseEvent.clientX - rectangle.left,
@@ -32,7 +32,7 @@ canvas.addEventListener("mousemove", function(e) {
 
 
 
-// Get a regular interval for drawing to the screen -> je ne comprends pas l'intérêt de cette partie ni pourquoi on appelled des bibliotheques
+// Get a regular interval for drawing to the screen -> je ne comprends pas l'intérêt de cette partie ni pourquoi on appelle des bibliotheques
 window.requestAnimFrame = (function (callback) {
         return window.requestAnimationFrame || 
            window.webkitRequestAnimationFrame ||
