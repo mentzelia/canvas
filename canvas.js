@@ -1,30 +1,27 @@
-//mise en place du canvas
-var canvas = document.getElementById("canvas");
-var context = canvas.getContext("2d");
-context.strokeStyle = "#000";
-context.lineWidth = 1;
-
-//gestion souris
-var draw = false;
-var mousePosition = {x:0, y:0};
-var lastPosition = mousePosition;
-
 var Canvas = {
-    init: function() {
-    
-        this.getMousePosition(canvasDom,mouseEvent);
+    init: function(canvas, color, line ) {
+        //mise en place du canva
+        this.canvas = document.getElementById("canvas");
+        this.context = this.canvas.getContext("2d");
+        this.context.strokeStyle = color;
+        this.context.lineWidth = line;
+        
+        //gestion souris
+        this.draw = false;
+        this.mousePosition = {x:0, y:0};
+        this.lastPosition = this.mousePosition;
+
+       
         this.evenementSouris();
         this.animationNavigateur();
-        this.renderCanvas();
         this.animationBoucle();
         this.evenementDoigt();
-        this.getTouchPosition(canvasDom, touchEvent);
-        this.canvaFixe();
+        
     },
     
     //obtenir la position de la souris sur le canva
-    getMousePosition: function(canvasDom, mouseEvent) {
-        var rectangle = canvasDom.getBoundingClientRect();// pour avoir la position de la souris 
+    getMousePosition: function(canvasDOM, mouseEvent) {
+        var rectangle = canvasDOM.getBoundingClientRect();// pour avoir la position de la souris 
         return {
             x: mouseEvent.clientX - rectangle.left,
             y: mouseEvent.clientY - rectangle.top,
@@ -33,16 +30,18 @@ var Canvas = {
     
     //gestion evenements de la souris
     evenementSouris: function() {
-        canvas.addEventListener("mousedown", function(e) {
-        draw = true;
-        lastPosition = getMousePosition(canvas, e);   
-        }, false); //useCapture pour compatibilité tous navigateurs
-        canvas.addEventListener("mouseup", function(e) {
-        draw =false;
-        }, false);
-        canvas.addEventListener("mousemove", function(e) {
-        mousePosition= this.getMousePosition(canvas, e);
-        }, false);
+        this.canvas.addEventListener("mousedown", function(e) {
+            this.draw = true;
+            this.lastPosition = this.getMousePosition(this.canvas, e);   
+        }.bind(this), false); //useCapture pour compatibilité tous navigateurs
+        
+        this.canvas.addEventListener("mouseup", function(e) {
+            this.draw =false;
+        }.bind(this), false);
+        
+        this.canvas.addEventListener("mousemove", function(e) {
+            this.mousePosition= this.getMousePosition(this.canvas, e);
+        }.bind(this), false);
     },
 
 
@@ -63,48 +62,58 @@ var Canvas = {
 
     // Fonction dessin matérialisé
     renderCanvas: function() {
-      if (draw) {
-        context.moveTo(lastPosition.x, lastPosition.y);
-        context.lineTo(mousePosition.x, mousePosition.y);
-        context.stroke();
-        lastPosition = mousePosition;
+      if (this.draw) {
+        this.context.moveTo(this.lastPosition.x, this.lastPosition.y);
+        this.context.lineTo(this.mousePosition.x, this.mousePosition.y);
+        this.context.stroke();
+        this.lastPosition = this.mousePosition;
       };
     },
 
-    // Animation
+    // Animation fonction auto appelée
     animationBoucle: function() {
+        var self = this;
         (function drawLoop () {
           requestAnimFrame(drawLoop);
-          this.renderCanvas();
+          self.renderCanvas();
         })();
     },
 
 
     //Gestion du doigt pour tablette et mobile
     evenementDoigt: function() {
-        canvas.addEventListener("touchstart", function (e) {
-                mousePosition = this.getTouchPosition(canvas, e);
-          var touch = e.touches[0]; //touches correspond aux doigts sur l'ecra mais le 0?
-          //pourquoi new -> pour lier l evenement touch à la souris?
+        this.canvas.addEventListener("touchstart", function (e) {
+            if (e.target === this.canvas) {
+            e.preventDefault();
+            };//fixe le canva
+            this.mousePosition = this.getTouchPosition(this.canvas, e);
+            var touch = e.touches[0]; //touches correspond aux doigts sur l'ecra mais le 0?
+            //pourquoi new -> pour lier l evenement touch à la souris?
             var mouseEvent = new MouseEvent("mousedown", { //pourquoi on créé un objet ici?
             clientX: touch.clientX,
             clientY: touch.clientY
-          });
-          canvas.dispatchEvent(mouseEvent); //envoie un evenement à la cible specifiée en appelant els ecouteurs dans l'ordre approprié
+            });
+            this.canvas.dispatchEvent(mouseEvent); //envoie un evenement à la cible specifiée en appelant els ecouteurs dans l'ordre approprié
         }, false);
 
-        canvas.addEventListener("touchend", function (e) {
-          var mouseEvent = new MouseEvent("mouseup", {});
-          canvas.dispatchEvent(mouseEvent);
-        }, false);
+        this.canvas.addEventListener("touchend", function (e) {
+            if (e.target === this.canvas) {
+            e.preventDefault();
+            };//fixe le canva
+            var mouseEvent = new MouseEvent("mouseup", {});
+            this.canvas.dispatchEvent(mouseEvent);
+            }, false);
 
-        canvas.addEventListener("touchmove", function (e) {
-          var touch = e.touches[0];
-          var mouseEvent = new MouseEvent("mousemove", {
+        this.canvas.addEventListener("touchmove", function (e) {
+            if (e.target === this.canvas) {
+            e.preventDefault();
+            };//fixe le canva
+            var touch = e.touches[0];
+            var mouseEvent = new MouseEvent("mousemove", {
             clientX: touch.clientX,
             clientY: touch.clientY
-          });
-          canvas.dispatchEvent(mouseEvent);
+            });
+            this.canvas.dispatchEvent(mouseEvent);
         }, false);
     },
 
@@ -118,26 +127,11 @@ var Canvas = {
     },
 
 
-    // Pour eviter le scroll du canva au toucher du doigt. On veut que le canva reste fixe
-    canvaFixe: function() {
-        document.body.addEventListener("touchstart", function (e) {
-          if (e.target === canvas) {
-            e.preventDefault();
-          }
-        }, false);
-        document.body.addEventListener("touchend", function (e) {
-          if (e.target === canvas) {
-            e.preventDefault();
-          }
-        }, false);
-        document.body.addEventListener("touchmove", function (e) {
-          if (e.target === canvas) {
-            e.preventDefault();
-          }
-        }, false);
-    },
+   
+};
 
-}
+var canvas1 = Object.create(Canvas);
+canvas1.init("canvas", "#000", "1");
 
 
 
