@@ -1,10 +1,13 @@
 var Canvas = {
-    init: function(canvas, color, line ) {
+    init: function(canvas, color, line, saveButton, clearButton) {
         //mise en place du canva
         this.canvas = document.getElementById("canvas");
         this.context = this.canvas.getContext("2d");
         this.context.strokeStyle = color;
         this.context.lineWidth = line;
+        this.saveButton = document.getElementById("save");
+        this.clearButton = document.getElementById("clear");
+     
         
         //gestion souris
         this.draw = false;
@@ -12,10 +15,14 @@ var Canvas = {
         this.lastPosition = this.mousePosition;
 
        
+        
+        
         this.evenementSouris();
         this.animationNavigateur();
         this.animationBoucle();
         this.evenementDoigt();
+        this.clearCanvas();
+        this.saveCanvas();
         
     },
     
@@ -125,24 +132,29 @@ var Canvas = {
         y: touchEvent.touches[0].clientY - rect.top
       };
     },
-
-
+    
+    //Reinitialiser le canva
+    clearCanvas: function () {
+        this.clearButton.addEventListener("click", function() {
+            this.canvas.width = this.canvas.width; //seul moyen est de reinitialiser la width
+            }.bind(this));
+        },
+    
+    //enregistrer en data Url
+    saveCanvas: function() {
+        this.saveButton.addEventListener("click", function () {
+            console.log("test");
+            var dataUrl = this.canvas.toDataURL();
+        }.bind(this));
+    },
+    
+    
    
 };
 
 var canvas1 = Object.create(Canvas);
-canvas1.init("canvas", "#000", "1");
+canvas1.init("canvas", "#000", "1", "save", "clear");
 
 
 
-/*
-//Pour enregistrer le canva -. associer à un bouton submit
-var dataUrl = canvas.toDataURL();
-
-
-//Fonction pour remettre le canva à zero -> associer à un bouton clear
-function clearCanvas() {
-    canvas.width = canvas.width;
-}
-*/
 
